@@ -1,6 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Button, TextBox
+import pyttsx3
+
+# Inicializar el motor de síntesis de voz
+engine = pyttsx3.init()
+
+# Seleccionar la voz de Microsoft Helena (español)
+engine.setProperty('voice', 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Speech\\Voices\\Tokens\\TTS_MS_ES-ES_HELENA_11.0')
+
+
 
 # Constante de Coulomb
 k_e = 8.99e9  # N·m^2/C^2
@@ -13,6 +22,11 @@ pos_cargas = []  # Lista de posiciones de las cargas
 arrastrando = None
 strm = None  # Variable para mantener el streamplot
 colorbar = None  # Variable para la barra de color
+
+# Función para hablar la respuesta
+def hablar_respuesta(respuesta):
+    engine.say(respuesta)  # Establece el texto que se hablará
+    engine.runAndWait()    # Ejecuta el comando de hablar
 
 # Función para calcular el campo eléctrico en un punto debido a una carga puntual
 def campo_electrico(q, pos_carga, pos_punto):
@@ -119,7 +133,8 @@ def calcular_campo_total(event):
         for q, pos_carga in zip(cargas, pos_cargas):
             campo_total += campo_electrico(q, pos_carga, [0, 0])  # Calcular en (0, 0)
         textbox_respuesta.set_val(f'El valor que se muestra es el resultado de la suma vectorial de los \ncampos eléctricos generados por las cargas presentes en el sistema.\nCampo Total: {campo_total[0]:.2e} N/C, {campo_total[1]:.2e} N/C')
-        
+
+
 # Función para responder preguntas sobre el campo eléctrico
 def responder_pregunta(event):
     pregunta = textbox_pregunta.text.lower()  # Obtener la pregunta
@@ -128,20 +143,54 @@ def responder_pregunta(event):
     if "campo electrico" in pregunta:
         respuesta = ("El campo eléctrico es una región en la que" 
         "una carga experimenta una\nfuerza.")
+         # Seleccionar la voz de Microsoft Helena (español)
+        engine.setProperty('voice', 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Speech\\Voices\\Tokens\\TTS_MS_ES-ES_HELENA_11.0')
+        # Texto a leer en español
+        engine.say("El campo electrico es una rregion en la que una carga experimenta una fuerza")
+        # Ejecutar el engine
+        engine.runAndWait()
+        
+        
     elif "carga" in pregunta:
         respuesta = "Una carga puede ser positiva o negativa, y se mide en coulombs (C)."
+        
+        # Seleccionar la voz de Microsoft Helena (español)
+        engine.setProperty('voice', 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Speech\\Voices\\Tokens\\TTS_MS_ES-ES_HELENA_11.0')
+        # Texto a leer en español
+        engine.say("Una carga puede ser positiva o negativa, y se mide en coulombs ")
+        # Ejecutar el engine
+        engine.runAndWait()
+        
     elif "ley de coulomb" in pregunta:
         respuesta = "La ley de Coulomb describe la fuerza entre dos cargas eléctricas."
+        
+        # Seleccionar la voz de Microsoft Helena (español)
+        engine.setProperty('voice', 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Speech\\Voices\\Tokens\\TTS_MS_ES-ES_HELENA_11.0')
+        # Texto a leer en español
+        engine.say("La ley de Coulomb describe la fuerza entre dos cargas eléctricas. ")
+        # Ejecutar el engine
+        engine.runAndWait()
+        
     elif"¿que es un dipolo electrico?" in pregunta:
         respuesta = "Un dipolo eléctrico es un sistema de dos cargas de igual magnitud pero\n    de signos opuestos, separadas por una distancia."
+        # Seleccionar la voz de Microsoft Helena (español)
+        engine.setProperty('voice', 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Speech\\Voices\\Tokens\\TTS_MS_ES-ES_HELENA_11.0')
+        # Texto a leer en español
+        engine.say("Un dipolo eléctrico es un sistema de dos cargas de igual magnitud pero de signos opuestos, separadas por una distancia.")
+        # Ejecutar el engine
+        engine.runAndWait()
+        
     elif "¿Al calcular el campo electrico, porque arroja ese valor?" in pregunta:
         respuesta = "El valor que se muestra es el resultado de la suma vectorial de los campos\n eléctricos generados por las cargas presentes en el sistema."
+        # Seleccionar la voz de Microsoft Helena (español)
+        engine.setProperty('voice', 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Speech\\Voices\\Tokens\\TTS_MS_ES-ES_HELENA_11.0')
+        # Texto a leer en español
+        engine.say("El valor que se muestra es el resultado de la suma vectorial de los campos eléctricos generados por las cargas presentes en el sistema. ")
+        # Ejecutar el engine
+        engine.runAndWait()
     else:
         respuesta = "Lo siento, no puedo responder a esa pregunta."
         
-    # Limitar la respuesta a 100 caracteres
-    if len(respuesta) > 100:  
-        respuesta = respuesta[:97] + '...'  # Truncar la respuesta y agregar '...'
 
     textbox_respuesta.set_val(respuesta)  # Mostrar respuesta en la caja de texto
 
@@ -189,6 +238,15 @@ plt.subplots_adjust(left=0.05, right=0.55, top=0.9, bottom=0.1)
 ax.set_title("Campo Eléctrico: Haga clic y arrastre las cargas")
 ax.grid(False)
 actualizar_campo()  # Inicializar visualización
+
+# Configurar parámetros de voz
+engine.setProperty('rate', 150)  # Velocidad de la voz (más bajo es más lento)
+engine.setProperty('volume', 1.0)  # Volumen (0.0 a 1.0)
+voices = engine.getProperty('voices')  
+engine.setProperty('voice', voices[1].id)  # Cambiar entre voces (1 para femenina, 0 para masculina)
+
+# Ejecutar el engine
+engine.runAndWait()
 
 # Mostrar la figura
 plt.show()
