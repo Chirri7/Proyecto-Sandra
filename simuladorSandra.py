@@ -118,7 +118,7 @@ def calcular_campo_total(event):
         campo_total = np.zeros(2)
         for q, pos_carga in zip(cargas, pos_cargas):
             campo_total += campo_electrico(q, pos_carga, [0, 0])  # Calcular en (0, 0)
-        textbox_respuesta.set_val(f'Campo Total: {campo_total[0]:.2e} N/C, {campo_total[1]:.2e} N/C')
+        textbox_respuesta.set_val(f'El valor que se muestra es el resultado de la suma vectorial de los \ncampos eléctricos generados por las cargas presentes en el sistema.\nCampo Total: {campo_total[0]:.2e} N/C, {campo_total[1]:.2e} N/C')
         
 # Función para responder preguntas sobre el campo eléctrico
 def responder_pregunta(event):
@@ -126,13 +126,22 @@ def responder_pregunta(event):
     respuesta = ""
     
     if "campo electrico" in pregunta:
-        respuesta = "El campo eléctrico es una región en la que una carga experimenta una fuerza."
+        respuesta = ("El campo eléctrico es una región en la que" 
+        "una carga experimenta una\nfuerza.")
     elif "carga" in pregunta:
         respuesta = "Una carga puede ser positiva o negativa, y se mide en coulombs (C)."
     elif "ley de coulomb" in pregunta:
         respuesta = "La ley de Coulomb describe la fuerza entre dos cargas eléctricas."
+    elif"¿que es un dipolo electrico?" in pregunta:
+        respuesta = "Un dipolo eléctrico es un sistema de dos cargas de igual magnitud pero\n    de signos opuestos, separadas por una distancia."
+    elif "¿Al calcular el campo electrico, porque arroja ese valor?" in pregunta:
+        respuesta = "El valor que se muestra es el resultado de la suma vectorial de los campos\n eléctricos generados por las cargas presentes en el sistema."
     else:
         respuesta = "Lo siento, no puedo responder a esa pregunta."
+        
+    # Limitar la respuesta a 100 caracteres
+    if len(respuesta) > 100:  
+        respuesta = respuesta[:97] + '...'  # Truncar la respuesta y agregar '...'
 
     textbox_respuesta.set_val(respuesta)  # Mostrar respuesta en la caja de texto
 
