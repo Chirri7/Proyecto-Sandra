@@ -119,6 +119,22 @@ def calcular_campo_total(event):
         for q, pos_carga in zip(cargas, pos_cargas):
             campo_total += campo_electrico(q, pos_carga, [0, 0])  # Calcular en (0, 0)
         textbox_respuesta.set_val(f'Campo Total: {campo_total[0]:.2e} N/C, {campo_total[1]:.2e} N/C')
+        
+# Función para responder preguntas sobre el campo eléctrico
+def responder_pregunta(event):
+    pregunta = textbox_pregunta.text.lower()  # Obtener la pregunta
+    respuesta = ""
+    
+    if "campo electrico" in pregunta:
+        respuesta = "El campo eléctrico es una región en la que una carga experimenta una fuerza."
+    elif "carga" in pregunta:
+        respuesta = "Una carga puede ser positiva o negativa, y se mide en coulombs (C)."
+    elif "ley de coulomb" in pregunta:
+        respuesta = "La ley de Coulomb describe la fuerza entre dos cargas eléctricas."
+    else:
+        respuesta = "Lo siento, no puedo responder a esa pregunta."
+
+    textbox_respuesta.set_val(respuesta)  # Mostrar respuesta en la caja de texto
 
 # Configuración de la figura y conexión de los eventos
 fig, ax = plt.subplots(figsize=(10, 6))
@@ -127,24 +143,32 @@ fig, ax = plt.subplots(figsize=(10, 6))
 plt.text(0.5, 1.05, "Simulador de campo eléctrico", fontsize=14, ha='center')
 
 # Agregar una caja de texto para el valor de la carga
-textbox_valor = TextBox(plt.axes([0.55, 0.8, 0.25, 0.05]), '')  # Caja de texto sin etiqueta
-plt.text(0.2, 1.2, 'Valor de la Carga (C):', fontsize=10, ha='left')  # Etiqueta independiente
+textbox_valor = TextBox(plt.axes([0.55, 0.8, 0.4, 0.05]), '')  # Caja de texto sin etiqueta
+plt.text(0.38, 1.3, 'Valor de la Carga (C):', fontsize=10, ha='left')  # Etiqueta independiente
 
 # Fijar los botones en áreas específicas que no interfieran con el área de gráficos
-btn_agregar = Button(plt.axes([0.55, 0.7, 0.25, 0.05]), 'Agregar Carga')  # Posición y tamaño del botón
+btn_agregar = Button(plt.axes([0.55, 0.7, 0.4, 0.05]), 'Agregar Carga')  # Posición y tamaño del botón
 btn_agregar.on_clicked(agregar_carga_con_valor)  # Conectar el botón a la función de agregar carga con valor
 
 # Agregar un botón para eliminar cargas
-btn_eliminar = Button(plt.axes([0.55, 0.6, 0.25, 0.05]), 'Eliminar Carga')  # Posición y tamaño del botón
+btn_eliminar = Button(plt.axes([0.55, 0.6, 0.4, 0.05]), 'Eliminar Carga')  # Posición y tamaño del botón
 btn_eliminar.on_clicked(eliminar_carga)  # Conectar el botón a la función de eliminar carga
-plt.text(0.38, -1.2, 'Electra (IA):', fontsize=15, ha='left')  # Etiqueta independiente
+plt.text(0.38, -1.3, 'Electra (IA):', fontsize=15, ha='left')  # Etiqueta independiente
 
 # Agregar un botón para calcular el campo total
-btn_calcular = Button(plt.axes([0.55, 0.4, 0.25, 0.05]), 'Calcular Campo')  # Posición y tamaño del botón
+btn_calcular = Button(plt.axes([0.55, 0.2, 0.4, 0.05]), 'Calcular Campo')  # Posición y tamaño del botón
 btn_calcular.on_clicked(calcular_campo_total)  # Conectar el botón a la función de calcular campo total
 
 # Agregar una caja de texto para mostrar la respuesta del cálculo
-textbox_respuesta = TextBox(plt.axes([0.55, 0.3, 0.25, 0.05]), '')  # Aquí no se necesita 'label' ni 'color'
+textbox_respuesta = TextBox(plt.axes([0.55, 0.01, 0.4, 0.15]), '')  # Aquí no se necesita 'label' ni 'color'
+
+# Caja de texto para preguntas del usuar1
+textbox_pregunta = TextBox(plt.axes([0.55, 0.4, 0.4, 0.05]), '')  # Caja de texto para pregunta
+plt.text(0.29, 1.3, 'Pregunte sobre el Campo Eléctrico:', fontsize=10, ha='left')  # Etiqueta para la pregunta
+
+# Botón para responder preguntas
+btn_responder = Button(plt.axes([0.55, 0.3, 0.4, 0.05]), 'Responder Pregunta')
+btn_responder.on_clicked(responder_pregunta)
 
 # Conectar los eventos del mouse
 fig.canvas.mpl_connect('button_press_event', on_click)
