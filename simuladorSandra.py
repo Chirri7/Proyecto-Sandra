@@ -9,7 +9,11 @@ engine = pyttsx3.init()
 # Seleccionar la voz de Microsoft Helena (español)
 engine.setProperty('voice', 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Speech\\Voices\\Tokens\\TTS_MS_ES-ES_HELENA_11.0')
 
-
+naranja_clasico = "#FF8000"
+naranja_intenso = "#FFA500"
+naranja_rojizo = "#F44336"
+naranja_anaranjado = "#FF6347"
+naranja_oscuro = "#D9534F"
 
 # Constante de Coulomb
 k_e = 8.99e9  # N·m^2/C^2
@@ -38,6 +42,13 @@ def campo_electrico(q, pos_carga, pos_punto):
     E_vec = k_e * q / r_mag**2 * (r_vec / r_mag)  # Normalizar el vector de posición
     return E_vec
 
+def potencial(q, pos_carga, pos_punto):
+    r_vec = np.array(pos_punto) - np.array(pos_carga)
+    r_mag = np.linalg.norm(r_vec)
+    if r_mag == 0:
+        return 0  # Evitar división por cero
+    return k_e * q / r_mag  # Potencial eléctrico
+
 # Función para actualizar la visualización del campo eléctrico
 def actualizar_campo():
     global strm, colorbar
@@ -48,9 +59,11 @@ def actualizar_campo():
 
     # Calcular el campo eléctrico en cada punto de la cuadrícula
     E_total = np.zeros((len(puntos), 2))
+    V_total = np.zeros(len(puntos))  # Para almacenar el potencial total
     for i, punto in enumerate(puntos):
         for q, pos_carga in zip(cargas, pos_cargas):
             E_total[i] += campo_electrico(q, pos_carga, punto)
+            V_total[i] += potencial(q, pos_carga, punto)  # Sumar 
 
     # Redimensionar para visualización
     Ex = E_total[:, 0].reshape(X.shape)
@@ -61,6 +74,18 @@ def actualizar_campo():
 
     # Crear el gráfico del campo eléctrico usando streamplot
     strm = ax.streamplot(X, Y, Ex, Ey, color=np.log(np.sqrt(Ex**2 + Ey**2) + 1e-10), cmap='cool', density=2)
+    
+    # Calcular niveles de contorno
+    V_min = np.min(V_total)
+    V_max = np.max(V_total)
+
+    if V_min == V_max:
+        contour_levels = [V_min]  # Solo un nivel si todos son iguales
+    else:
+        contour_levels = np.linspace(V_min, V_max, num=150)  # Niveles crecientes
+    
+    # Ajustar niveles según sea necesario
+    ax.contour(X, Y, V_total.reshape(X.shape), levels=contour_levels, colors= naranja_rojizo , linewidths=0.5)
 
     # Solo agregar la barra de color una vez
     if colorbar is None:
@@ -250,3 +275,4 @@ engine.runAndWait()
 
 # Mostrar la figura
 plt.show()
+
